@@ -87,8 +87,8 @@ async function searchDuties(page){
       await sleep(30000);
 
       const extractedText = await page.$eval('*', (el) => el.innerText);
-      //console.log("INNER TEXT:");
-      //console.log(extractedText);
+      console.log("INNER TEXT:");
+      console.log(extractedText);
 
       //const extractedText2 = await page.$eval('*', (el) => el.innerHTML);
       //console.log("INNER HTML:");
