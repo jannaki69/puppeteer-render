@@ -97,7 +97,7 @@ async function searchDuties(page){
       let t = String(extractedText).toUpperCase();
       let position1 = t.search("DUTIES AVAILABLE");
       let position2 = t.search("Det finnes ingen ledige eller reserverte dagsverk".toUpperCase());
-      if (position2 != -1  )
+      if (position1 != -1  )
         {
           found=true;
           //console.log("Found .." + position1.toString() + "  " + position2.toString());
@@ -117,7 +117,7 @@ async function searchDuties(page){
 
         var mailOptions = {
           from: 'jannaki69@gmail.com',
-          to: 'jannaki69@hotmail.com',
+          to: 'jannaki69@hotmail.com; jannaki69@gmail.com',
           subject: 'Sending Email using Node.js',
           text: 'That was easy!' + numberOfEmails.toString()
         };
