@@ -84,7 +84,7 @@ async function searchDuties(page){
       let found=false;
       
       const sleep =(ms=30000) => new Promise(resolve => setTimeout(resolve, ms));
-      await sleep(10000);
+      await sleep(30000);
 
       const extractedText = await page.$eval('*', (el) => el.innerText);
       //console.log("INNER TEXT:");
@@ -178,7 +178,7 @@ async function searchDutiesPeriodically(page){
         
         if (numberOfEmails > 4)
         {
-          console.log(minutesSinceLastEmail.toString() + " minutes since last email and no of emails > 4");
+          console.log(minutesSinceLastEmail.toString() + " minutes since last email and no of emails > 1");
         }
         else
         {
