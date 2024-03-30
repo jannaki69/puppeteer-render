@@ -80,6 +80,9 @@ async function searchDuties(page){
         await loginPage(page);
       }
       
+      await page.reload();
+      console.log("......RELOAD 2 done " + page.url().toString());
+
       //page.once('load', () => console.log('Page loaded!'));
       let found=false;
       
