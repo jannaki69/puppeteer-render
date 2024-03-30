@@ -29,8 +29,11 @@ const scrapeLogic = async (res) =>
 
   try 
   {
+    console.log("AAAAAAAAAA");
     const page = await browser.newPage();
+    console.log("BBBBBBBBBB");
     await searchDuties(page);
+    console.log("ØØØØØØØØØ");
     await browser.close();
   } 
   catch (e) {
@@ -45,9 +48,11 @@ async function searchDuties(page){
 
   try 
   {
+    console.log("lastEmailTime   " + lastEmailTime.toString());
     //const page = await browser.newPage();
+    console.log("CCCCCCCCC");
     await page.goto(openDutiesText);
-
+    console.log("DDDDDDDD");
     var timeNow = Date.now();
     var timeDiff = timeNow - lastEmailTime; //in ms
     // strip the ms
