@@ -6,7 +6,8 @@ const { application } = require("express");
 //require("dotenv").config();
 
 var numberOfEmails = 0;
-var lastEmailTime = new Date();
+var lastEmailTime = new Date(Date.now());
+const arrDutiesFound = [];
 
 console.log('executablePath = .... ' + puppeteer.executablePath().toString());
 var openDutiesText = 'https://tpowebservice.nsb.no:8501/app/open-duties';
@@ -29,11 +30,8 @@ const scrapeLogic = async (res) =>
 
   try 
   {
-    console.log("AAAAAAAAAA");
     const page = await browser.newPage();
-    console.log("BBBBBBBBBB");
     await searchDuties(page);
-    console.log("ØØØØØØØØØ");
     await browser.close();
   } 
   catch (e) {
@@ -48,11 +46,13 @@ async function searchDuties(page){
 
   try 
   {
-    console.log("lastEmailTime   " + lastEmailTime.toString());
+    console.log("numberOfEmails   " + numberOfEmails.toString());
+    console.log("lastEmailTime   " + lastEmailTime.toString()); // + "  =  " + lastEmailTime.toDateString());
     //const page = await browser.newPage();
-    console.log("CCCCCCCCC");
-    await page.goto(openDutiesText);
-    console.log("DDDDDDDD");
+    
+    //await page.goto(openDutiesText);
+    await page.goto('file:///C:/Users/janna/VS/w3school/SISCOG Web App c2 en reservert en ledig.html');
+    
     var timeNow = Date.now();
     var timeDiff = timeNow - lastEmailTime; //in ms
     // strip the ms
@@ -65,20 +65,20 @@ async function searchDuties(page){
     {
       //reset
       numberOfEmails = 0;
-      lastEmailTime = Date.now();
+      lastEmailTime = new Date(Date.now());
     }
         
     if (numberOfEmails > 1)
     {
-      console.log(minutesSinceLastEmail.toString() + " minutes since last email and no of emails > 4");
+      console.log(minutesSinceLastEmail.toString() + " minutes since last email and no of emails > 1");
     }
     else
     {
   
       await page.reload();
       console.log("RELOAD done " + page.url().toString());
-
-      //await page.goto('file:///C:/Users/janna/VS/w3school/SISCOG Web App c2 en reservert en ledig.html');
+      page.once('load', () => console.log('Page loaded!'));
+      
 
       if ('https://tpowebservice.nsb.no:8501/app/login' == page.url().toString()) 
       {
@@ -88,23 +88,95 @@ async function searchDuties(page){
       await page.reload();
       console.log("......RELOAD 2 done " + page.url().toString());
 
-      //page.once('load', () => console.log('Page loaded!'));
+      page.once('load', () => console.log('Page loaded!'));
       let found=false;
       
       const sleep =(ms=30000) => new Promise(resolve => setTimeout(resolve, ms));
-      await sleep(30000);
+      await sleep(10000);
 
-      const extractedText = await page.$eval('*', (el) => el.innerText);
-      console.log("INNER TEXT:");
-      console.log(extractedText);
-
-      //const extractedText2 = await page.$eval('*', (el) => el.innerHTML);
-      //console.log("INNER HTML:");
-      //console.log(extractedText2);
+      //await page.waitForSelector('.mini-card');
+      //await page.waitForSelector('.duty-hours');
+     
       
+      const extractedTextTest = await page.$eval('*', (el) => el.innerText);
+
+      console.log("TEST:");
+      console.log(extractedTextTest);
+      
+/*
+      const nodedutyhours = await page.evaluate(() => {
+        return document.querySelectorAll('.duty-hours');
+        });
+*/
+        //let miniD = await page.$$('.duty-hours');
+        const arrItemFound = [];
+        let miniD2 = await page.$$('.panel-heading');
+
+        for (let i = 0; i < miniD2.length; i++) {
+
+          let itemJsHandle = await miniD2[i].getProperty('innerText');
+          let itemText = await itemJsHandle.jsonValue();
+          
+          if (!itemText.includes("Filter"))
+            if (arrDutiesFound.includes(itemText))
+              arrItemFound[i] = true;
+            else 
+            {
+              arrDutiesFound.push(itemText);
+            };
+
+          console.log(itemText + " arrayLength " + arrDutiesFound.length.toString());
+        };
+
+      //const nodeList = page.querySelectorAll(".mini-card");
+/*
+      for (let i = 0; i < miniD.length; i++) {
+
+        let itemJsHandle = await miniD[i].getProperty('innerText');
+        let itemText = await itemJsHandle.jsonValue();
+        console.log(itemText);
+
+      }
+      */
+     //nodeList.forEach((item) => {
+      //console.log(item.innerText);
+      //});
+/*
+      let duties = await page.$$('.mini-card');
+      //const nodeList = page.querySelectorAll(".mini-card");
+      for (let i = 0; i < duties.length; i++) {
+        console.log(duties[i].innerText);
+        let element = duties[i];
+
+      }
+ */     
+/*
+      let urls = await page.evaluate(() => {
+        let results = [];
+        let items = document.querySelectorAll('.mini-card');
+        items.forEach((item) => {
+          console.log(item.innerText);
+            //results.push({
+            //    url:  item.getAttribute('href'),
+            //    text: item.innerText,
+            //}
+            //);
+        });
+        return results;
+    })
+*/
+      const extractedText = await page.$eval('*', (el) => el.innerText);
+
+      console.log("INNER TEXT 1:");
+      console.log(extractedText);
+/*
+      const extractedText2 = await page.$eval('*', (el) => el.innerHTML);
+      console.log("INNER HTML:");
+      console.log(extractedText2);
+  */    
       let t = String(extractedText).toUpperCase();
       let position1 = t.search("DUTIES AVAILABLE");
-      let position2 = t.search("Det finnes ingen ledige eller reserverte dagsverk".toUpperCase());
+      //let position2 = t.search("Det finnes ingen ledige eller reserverte dagsverk".toUpperCase());
       if (position1 != -1  )
         {
           found=true;
@@ -134,9 +206,10 @@ async function searchDuties(page){
           if (error) {
             console.log(error);
           } else {
-            console.log('Email sent: ' + info.response);
-              lastEmailTime= Date.now();
-              numberOfEmails++;
+            lastEmailTime= new Date(Date.now());
+            numberOfEmails++;
+            console.log("HØØØØØØ");
+            console.log('Email sent: ' + info.response + "  Time=  " + lastEmailTime.toDateString() + "  No of emails= " + numberOfEmails.toString());
           }
           });
       }
@@ -154,7 +227,7 @@ async function searchDuties(page){
   catch (e) 
   {
     console.error(e);
-    res.send(`Something went wrong while running Puppeteer: ${e}`);
+    //res.send(`Something went wrong while running Puppeteer: ${e}`);
   };
 };
 
@@ -181,7 +254,7 @@ async function searchDutiesPeriodically(page){
         {
           //reset
           numberOfEmails = 0;
-          lastEmailTime = Date.now();
+          lastEmailTime = new Date(Date.now());
         }
         
         if (numberOfEmails > 4)
@@ -207,7 +280,7 @@ async function searchDutiesPeriodically(page){
           await sleep(30000);
 
           const extractedText = await page.$eval('*', (el) => el.innerText);
-          console.log("INNER TEXT:");
+          console.log("INNER TEXT 2:");
           console.log(extractedText);
 
           //const extractedText2 = await page.$eval('*', (el) => el.innerHTML);
@@ -247,7 +320,7 @@ async function searchDutiesPeriodically(page){
                 console.log(error);
               } else {
                 console.log('Email sent: ' + info.response);
-                lastEmailTime= Date.now();
+                lastEmailTime= new Date(Date.now());
                 numberOfEmails++;
               }
             });
@@ -269,13 +342,14 @@ async function searchDutiesPeriodically(page){
    
   } catch (e) {
     console.error(e);
-    res.send(`Something went wrong while running Puppeteer: ${e}`);
+    //res.send(`Something went wrong while running Puppeteer: ${e}`);
   } finally {
     //await browser.close();
   }
 };
 
 async function loginPage(page){
+try{
   // Set screen size
   await page.setViewport({width: 1080, height: 1024});
 
@@ -288,9 +362,18 @@ async function loginPage(page){
   //await page.click('#submit');
 
   await page.waitForNavigation(); // <------------------------- Wait for Navigation
+  const sleep =(ms=30000) => new Promise(resolve => setTimeout(resolve, ms));
+  await sleep(30000);
+
   await page.goto(openDutiesText);
 
   console.log('Login password done. New Page URL:', page.url());
+}
+  catch (e) 
+  {
+    console.error(e);
+    //res.send(`Something went wrong while LOGIN: ${e}`);
+  };  
 };
 
 
