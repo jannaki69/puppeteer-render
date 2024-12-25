@@ -227,7 +227,8 @@ for (let i=0; i < linesArray.length; i++)
 
         var mailOptions = {
           from: 'jannaki69@gmail.com',
-          to: 'jannaki69@hotmail.com; jannaki69@gmail.com',
+          //to: 'jannaki69@hotmail.com; jannaki69@gmail.com',
+          to: 'voudas1941@gmail.com',
           subject: 'Sending Email using Node.js',
           text: 'That was easy!' + numberOfEmails.toString()
         };
