@@ -33,7 +33,7 @@ const scrapeLogic = async (res) =>
     const page = await browser.newPage();
     await searchDuties(page);
     await browser.close();
-    res.send(`FINISHED RUNNING PUPPETEER`);
+    res.send(`FINISHED RUNNING PUPPETEER<BR>\n` + new Date(Date.now()).toTimeString() + `<BR>\nNumber of emails=` + numberOfEmails.toString() + `<BR>\nLast email time= ` + lastEmailTime.toString() );
   } 
   catch (e) {
     console.error(e);
@@ -47,8 +47,8 @@ async function searchDuties(page){
 
   try 
   {
-    console.log("numberOfEmails   " + numberOfEmails.toString());
-    console.log("lastEmailTime   " + lastEmailTime.toString()); // + "  =  " + lastEmailTime.toDateString());
+    //console.log("numberOfEmails   " + numberOfEmails.toString());
+    //console.log("lastEmailTime   " + lastEmailTime.toString()); // + "  =  " + lastEmailTime.toDateString());
     //const page = await browser.newPage();
     
     await page.goto(openDutiesText);
@@ -102,8 +102,8 @@ async function searchDuties(page){
       
       const extractedTextTest = await page.$eval('*', (el) => el.innerText);
 
-      console.log("TEST:");
-      console.log(extractedTextTest);
+      //console.log("TEST:");
+      //console.log(extractedTextTest);
 
       // Example text with newline characters
       //const textExtracted = extractedTextTest.toString();
@@ -198,8 +198,8 @@ for (let i=0; i < linesArray.length; i++)
 */
       const extractedText = await page.$eval('*', (el) => el.innerText);
 
-      console.log("INNER TEXT 1:");
-      console.log(extractedText);
+      //console.log("INNER TEXT 1:");
+      //console.log(extractedText);
 /*
       const extractedText2 = await page.$eval('*', (el) => el.innerHTML);
       console.log("INNER HTML:");
@@ -217,6 +217,7 @@ for (let i=0; i < linesArray.length; i++)
       if (found && availableDutyFoundAndAdded) 
       {
         console.log('FOUND AVAILABLE dutie');
+        lastEmailTime= new Date(Date.now());
 
         var transporter = NodeMailer.createTransport({
           service: 'gmail',
@@ -230,24 +231,24 @@ for (let i=0; i < linesArray.length; i++)
           from: 'jannaki69@gmail.com',
           //to: 'jannaki69@hotmail.com; jannaki69@gmail.com',
           to: 'voudas1941@gmail.com',
-          subject: 'Sending Email using Node.js',
-          text: 'That was easy!' + numberOfEmails.toString()
+          subject: 'Puppeteer DOCKER ' + lastEmailTime.toDateString() ,
+          text: 'PUPPETEER!\nNumber of emails=' + numberOfEmails.toString() + '\n\nExtracted text:\n' + extractedText.toString()
         };
 
         transporter.sendMail(mailOptions, function (error, info) {
           if (error) {
             console.log(error);
           } else {
-            lastEmailTime= new Date(Date.now());
+            //lastEmailTime= new Date(Date.now());
             numberOfEmails++;
-            console.log("HØØØØØØ");
             console.log('Email sent: ' + info.response + "  Time=  " + lastEmailTime.toDateString() + "  No of emails= " + numberOfEmails.toString());
           }
           });
       }
       else
       {
-        numberOfEmails = 0;
+        if (!found)
+          numberOfEmails = 0;
       };
         
       const d = new Date();
