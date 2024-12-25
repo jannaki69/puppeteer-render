@@ -51,7 +51,8 @@ async function searchDuties(page){
     //const page = await browser.newPage();
     
     //await page.goto(openDutiesText);
-    await page.goto('file:///C:/Users/janna/VS/w3school/SISCOG Web App c2 en reservert en ledig.html');
+    //await page.goto('file:///C:/Users/janna/VS/w3school/SISCOG Web App c2 en reservert en ledig.html');
+    await page.goto('file:///C:/Users/janna/VS/w3school/SISCOG Web App c2.html');
     
     var timeNow = Date.now();
     var timeDiff = timeNow - lastEmailTime; //in ms
@@ -102,14 +103,42 @@ async function searchDuties(page){
 
       console.log("TEST:");
       console.log(extractedTextTest);
+
+      // Example text with newline characters
+      //const textExtracted = extractedTextTest.toString();
+
+
+// Split the text into an array using the newline character
+const linesArray = extractedTextTest.split('\n');
+
+console.log(linesArray);
+
+const arrItemFound = [];
+var availableDutyFoundAndAdded = false;
+for (let i=0; i < linesArray.length; i++)
+{
+  const numberOfDInLine = findNumberBeforeWord(linesArray[i], 'ledig');
+  if (numberOfDInLine!=null)
+    if (numberOfDInLine>0)
+    {
+      const wasAnotherAdded = addItemIfNotExists(arrDutiesFound, linesArray[i]);
+      //arrDutiesFound.push(linesArray[i]);
+      if (wasAnotherAdded)
+        availableDutyFoundAndAdded=true;
+    }
+//  console.log(`Number of cars: ${numberOfCars}`);
+
+}
+
+
       
 /*
       const nodedutyhours = await page.evaluate(() => {
         return document.querySelectorAll('.duty-hours');
         });
-*/
+
         //let miniD = await page.$$('.duty-hours');
-        const arrItemFound = [];
+      
         let miniD2 = await page.$$('.panel-heading');
 
         for (let i = 0; i < miniD2.length; i++) {
@@ -127,6 +156,7 @@ async function searchDuties(page){
 
           console.log(itemText + " arrayLength " + arrDutiesFound.length.toString());
         };
+*/
 
       //const nodeList = page.querySelectorAll(".mini-card");
 /*
@@ -183,7 +213,7 @@ async function searchDuties(page){
           //console.log("Found .." + position1.toString() + "  " + position2.toString());
         }
 
-      if (found) 
+      if (found && availableDutyFoundAndAdded) 
       {
         console.log('FOUND AVAILABLE dutie');
 
@@ -375,6 +405,46 @@ try{
     //res.send(`Something went wrong while LOGIN: ${e}`);
   };  
 };
+
+// Function to find the number in front of a specific word
+function findNumberBeforeWord(text, word) {
+  // Create a regular expression to match a number followed by the specific word
+  const regex = new RegExp(`(\\d+)\\s+${word}`, 'i');
+  const match = text.match(regex);
+
+  // If a match is found, return the number; otherwise, return null
+  return match ? parseInt(match[1], 10) : null;
+}
+
+// Function to check if an item exists in the array, and if not, add it
+function addItemIfNotExists(arr, item) {
+  // Check if the item is already in the array
+  if (!arr.includes(item)) {
+      // If the item is not in the array, add it
+      arr.push(item);
+      return true; // Indicate the item was added
+  }
+  return false; // Indicate the item was already present
+}
+
+// Function to find the text between two specified words
+function findTextBetweenWords(text, startWord, endWord) {
+  // Create a regular expression to match the text between the start and end words
+  const regex = new RegExp(`${startWord}(.*?)${endWord}`, 'i');
+  const match = text.match(regex);
+
+  // If a match is found, return the captured group; otherwise, return null
+  return match ? match[1].trim() : null;
+}
+
+// Example usage
+const text = "The quick brown fox jumps over the lazy dog.";
+const startWord = "quick";
+const endWord = "over";
+
+const result = findTextBetweenWords(text, startWord, endWord);
+console.log(`Text between "${startWord}" and "${endWord}": ${result}`);
+// Output: Text between "quick" and "over": brown fox jumps
 
 
 module.exports = { scrapeLogic };
