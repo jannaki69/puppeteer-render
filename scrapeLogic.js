@@ -94,7 +94,7 @@ async function searchDuties(page){
       let found=false;
       
       const sleep =(ms=30000) => new Promise(resolve => setTimeout(resolve, ms));
-      await sleep(10000);
+      await sleep(20000);
 
       //await page.waitForSelector('.mini-card');
       //await page.waitForSelector('.duty-hours');
@@ -251,10 +251,10 @@ for (let i=0; i < linesArray.length; i++)
           numberOfEmails = 0;
       };
         
-      const d = new Date();
-      var text = d.toDateString() + ' ' + d.toTimeString();
+      //const d = new Date();
+      //var text = d.toDateString() + ' ' + d.toTimeString();
       
-      console.log(text);
+      console.log('linesArray.length=' + linesArray.length.toString());
     }
   } 
   catch (e) 
@@ -396,7 +396,7 @@ try{
 
   await page.waitForNavigation(); // <------------------------- Wait for Navigation
   const sleep =(ms=30000) => new Promise(resolve => setTimeout(resolve, ms));
-  await sleep(30000);
+  await sleep(20000);
 
   await page.goto(openDutiesText);
 
