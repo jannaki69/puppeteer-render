@@ -94,7 +94,7 @@ async function searchDuties(page){
       let found=false;
       
       const sleep =(ms=30000) => new Promise(resolve => setTimeout(resolve, ms));
-      await sleep(20000);
+      await sleep(15000);
 
       //await page.waitForSelector('.mini-card');
       //await page.waitForSelector('.duty-hours');
@@ -396,7 +396,7 @@ try{
 
   await page.waitForNavigation(); // <------------------------- Wait for Navigation
   const sleep =(ms=30000) => new Promise(resolve => setTimeout(resolve, ms));
-  await sleep(20000);
+  await sleep(35000);
 
   await page.goto(openDutiesText);
 
