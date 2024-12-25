@@ -50,9 +50,9 @@ async function searchDuties(page){
     console.log("lastEmailTime   " + lastEmailTime.toString()); // + "  =  " + lastEmailTime.toDateString());
     //const page = await browser.newPage();
     
-    //await page.goto(openDutiesText);
+    await page.goto(openDutiesText);
     //await page.goto('file:///C:/Users/janna/VS/w3school/SISCOG Web App c2 en reservert en ledig.html');
-    await page.goto('file:///C:/Users/janna/VS/w3school/SISCOG Web App c2.html');
+    //await page.goto('file:///C:/Users/janna/VS/w3school/SISCOG Web App c2.html');
     
     var timeNow = Date.now();
     var timeDiff = timeNow - lastEmailTime; //in ms
