@@ -33,6 +33,7 @@ const scrapeLogic = async (res) =>
     const page = await browser.newPage();
     await searchDuties(page);
     await browser.close();
+    res.send(`FINISHED RUNNING PUPPETEER`);
   } 
   catch (e) {
     console.error(e);
