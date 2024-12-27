@@ -1,5 +1,8 @@
 const puppeteer = require("puppeteer");
 const NodeMailer = require('nodemailer');
+
+const fs = require('fs');
+
 const { setIntervalAsync, clearIntervalAsync } = require('set-interval-async');
 const { application } = require("express");
 
@@ -51,10 +54,19 @@ async function searchDuties(page){
     //console.log("lastEmailTime   " + lastEmailTime.toString()); // + "  =  " + lastEmailTime.toDateString());
     //const page = await browser.newPage();
     
-    await page.goto(openDutiesText);
+    await page.goto(openDutiesText, { waitUntil: 'load' });
     //await page.goto('file:///C:/Users/janna/VS/w3school/SISCOG Web App c2 en reservert en ledig.html');
     //await page.goto('file:///C:/Users/janna/VS/w3school/SISCOG Web App c2.html');
-    
+
+    /////////////////////
+    //const client = await page.target().createCDPSession();
+    //await client.send('Page.enable');
+    //const { data } = await client.send('Page.captureSnapshot', { format: 'mhtml' });
+
+    //fs.writeFileSync('page.mhtml', data);
+
+
+    //////////////////////////
     var timeNow = Date.now();
     var timeDiff = timeNow - lastEmailTime; //in ms
     // strip the ms
@@ -81,20 +93,20 @@ async function searchDuties(page){
       console.log("RELOAD done " + page.url().toString());
       page.once('load', () => console.log('Page loaded!'));
       
-
+      //if ('https://tpowebservice.nsb.no:8501/app/login' == client.page.urlurl().toString())
       if ('https://tpowebservice.nsb.no:8501/app/login' == page.url().toString()) 
       {
         await loginPage(page);
       }
       
-      await page.reload();
+      //await page.reload();
       console.log("......RELOAD 2 done " + page.url().toString());
 
       page.once('load', () => console.log('Page loaded!'));
       let found=false;
       
-      const sleep =(ms=30000) => new Promise(resolve => setTimeout(resolve, ms));
-      await sleep(15000);
+      //const sleep =(ms=30000) => new Promise(resolve => setTimeout(resolve, ms));
+      //await sleep(15000);
 
       //await page.waitForSelector('.mini-card');
       //await page.waitForSelector('.duty-hours');
@@ -394,11 +406,11 @@ try{
   await page.click("button[type=submit]");
   //await page.click('#submit');
 
-  await page.waitForNavigation(); // <------------------------- Wait for Navigation
-  const sleep =(ms=30000) => new Promise(resolve => setTimeout(resolve, ms));
-  await sleep(35000);
+  await page.waitForNavigation({ waitUntil: 'load' }); // <------------------------- Wait for Navigation
+  //const sleep =(ms=30000) => new Promise(resolve => setTimeout(resolve, ms));
+  //await sleep(35000);
 
-  await page.goto(openDutiesText);
+  await page.goto(openDutiesText, { waitUntil: 'load' });
 
   console.log('Login password done. New Page URL:', page.url());
 }

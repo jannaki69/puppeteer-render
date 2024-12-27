@@ -9,7 +9,7 @@ app.get("/scrape", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Render Puppeteer server is up and running for puppeteer-render!<BR>Time= " +  new Date(Date.now()).toTimeString()+ '<BR>Listening on port ${PORT}');
+  res.send("Render Puppeteer server is up and running for puppeteer-render!<BR>Time= " +  new Date(Date.now()).toTimeString()+ '<BR>Listening on port ' + PORT);
   console.log('GET:   Listening on port ' + PORT + '\nTime= ' +  new Date(Date.now()).toTimeString()) + '\n\n';
 });
 
