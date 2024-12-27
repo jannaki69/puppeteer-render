@@ -54,7 +54,7 @@ async function searchDuties(page){
     //console.log("lastEmailTime   " + lastEmailTime.toString()); // + "  =  " + lastEmailTime.toDateString());
     //const page = await browser.newPage();
     
-    await page.goto(openDutiesText, { waitUntil: 'load' });
+    await page.goto(openDutiesText, { waitUntil: 'networkidle0' });
     //await page.goto('file:///C:/Users/janna/VS/w3school/SISCOG Web App c2 en reservert en ledig.html');
     //await page.goto('file:///C:/Users/janna/VS/w3school/SISCOG Web App c2.html');
 
@@ -89,8 +89,8 @@ async function searchDuties(page){
     else
     {
   
-      await page.reload();
-      console.log("RELOAD done " + page.url().toString());
+      //await page.reload();
+      //console.log("RELOAD done " + page.url().toString());
       page.once('load', () => console.log('Page loaded!'));
       
       //if ('https://tpowebservice.nsb.no:8501/app/login' == client.page.urlurl().toString())
@@ -100,7 +100,7 @@ async function searchDuties(page){
       }
       
       //await page.reload();
-      console.log("......RELOAD 2 done " + page.url().toString());
+      //console.log("......RELOAD 2 done " + page.url().toString());
 
       page.once('load', () => console.log('Page loaded!'));
       let found=false;
@@ -406,11 +406,12 @@ try{
   await page.click("button[type=submit]");
   //await page.click('#submit');
 
-  await page.waitForNavigation({ waitUntil: 'load' }); // <------------------------- Wait for Navigation
+  await page.waitForNavigation({ waitUntil: 'networkidle0' }); // <------------------------- Wait for Navigation
   //const sleep =(ms=30000) => new Promise(resolve => setTimeout(resolve, ms));
   //await sleep(35000);
 
-  await page.goto(openDutiesText, { waitUntil: 'load' });
+  await page.goto(openDutiesText, { waitUntil: 'networkidle0' });
+
 
   console.log('Login password done. New Page URL:', page.url());
 }
