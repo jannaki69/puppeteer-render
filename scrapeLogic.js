@@ -11,8 +11,10 @@ const { application } = require("express");
 var numberOfEmails = 0;
 var lastEmailTime = new Date(Date.now());
 const arrDutiesFound = [];
+var extractedText = "";
+var noOfIterations = 0;
 
-console.log('executablePath = .... ' + puppeteer.executablePath().toString());
+//console.log('executablePath = .... ' + puppeteer.executablePath().toString());
 var openDutiesText = 'https://tpowebservice.nsb.no:8501/app/open-duties';
 
 const scrapeLogic = async (res) => 
@@ -36,7 +38,8 @@ const scrapeLogic = async (res) =>
     const page = await browser.newPage();
     await searchDuties(page);
     await browser.close();
-    res.send(`FINISHED RUNNING PUPPETEER<BR>\n` + new Date(Date.now()).toTimeString() + `<BR>\nNumber of emails=` + numberOfEmails.toString() + `<BR>\nLast email time= ` + lastEmailTime.toString() );
+    console.log('\n');
+    res.send(`FINISHED RUNNING PUPPETEER<BR>\n` + new Date(Date.now()).toTimeString() + `<BR>\nExtracted text = <BR>\n` + extractedText.toString() );
   } 
   catch (e) {
     console.error(e);
@@ -46,7 +49,88 @@ const scrapeLogic = async (res) =>
   }
 };
 
-async function searchDuties(page){
+
+async function searchDuties(page)
+{
+  try 
+  {
+    //await page.goto(openDutiesText, { waitUntil: 'networkidle0' });
+    //await page.goto('file:///C:/Users/janna/VS/w3school/SISCOG Web App c2 en reservert en ledig.html');
+    await page.goto('file:///C:/Users/janna/VS/w3school/TestPage.html');
+    
+    if ('https://tpowebservice.nsb.no:8501/app/login' == page.url().toString()) 
+    {
+      await loginPage(page);
+    }
+
+    extractedText = await page.$eval('*', (el) => el.innerText);
+
+
+    // Split the text into an array using the newline character
+    const linesArray = extractedText.split('\n');
+
+    //console.log(linesArray);
+
+    var txtNewDutyFound = "";
+
+    var availableDutyFoundAndAdded = false;
+    for (let i=0; i < linesArray.length; i++)
+    {
+      const numberOfDInLine = findNumberBeforeWord(linesArray[i], 'ledig');
+      if (numberOfDInLine!=null)
+        if (numberOfDInLine>0)
+        {
+          const wasAnotherAdded = addItemIfNotExists(arrDutiesFound, linesArray[i]);
+          //arrDutiesFound.push(linesArray[i]);
+          if (wasAnotherAdded)
+            availableDutyFoundAndAdded=true;
+            txtNewDutyFound = linesArray[i];
+        }
+    }
+      
+    if (availableDutyFoundAndAdded) 
+    {
+      lastEmailTime= new Date(Date.now());
+
+      var transporter = NodeMailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'jannaki69@gmail.com',
+          pass: 'qopo mxog serg xmur'
+        }
+      });
+
+      var mailOptions = {
+        from: 'jannaki69@gmail.com',
+        //to: 'jannaki69@hotmail.com; jannaki69@gmail.com',
+        to: 'voudas1941@gmail.com',
+        subject: 'Puppeteer DOCKER ' + lastEmailTime.toDateString() ,
+        text: 'PUPPETEER!\n\nNew duty:\n' + txtNewDutyFound.toString() //extractedText.toString()
+      };
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          //lastEmailTime= new Date(Date.now());
+          numberOfEmails++;
+          console.log('Send mail info.response: ' + info.response + "\nTime=  " + lastEmailTime.toDateString() + "\nNew duty found = " + txtNewDutyFound.toString());
+        }
+        });
+    }     
+    noOfIterations++;
+    console.log('Number of iterations = ' + noOfIterations.toString());
+    console.log('arrDutiesFound.length=' + arrDutiesFound.length.toString());
+  } 
+  catch (e) 
+  {
+    console.error(e);
+    //res.send(`Something went wrong while running Puppeteer: ${e}`);
+  };
+};
+
+
+async function searchDutiesOld(page){
 
   try 
   {
@@ -411,9 +495,7 @@ try{
   //await sleep(35000);
 
   await page.goto(openDutiesText, { waitUntil: 'networkidle0' });
-
-
-  console.log('Login password done. New Page URL:', page.url());
+  //console.log('Login password done. New Page URL:', page.url());
 }
   catch (e) 
   {
@@ -459,7 +541,7 @@ const startWord = "quick";
 const endWord = "over";
 
 const result = findTextBetweenWords(text, startWord, endWord);
-console.log(`Text between "${startWord}" and "${endWord}": ${result}`);
+//console.log(`Text between "${startWord}" and "${endWord}": ${result}`);
 // Output: Text between "quick" and "over": brown fox jumps
 
 
