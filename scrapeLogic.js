@@ -54,9 +54,9 @@ async function searchDuties(page)
 {
   try 
   {
-    //await page.goto(openDutiesText, { waitUntil: 'networkidle0' });
+    await page.goto(openDutiesText, { waitUntil: 'networkidle0' });
     //await page.goto('file:///C:/Users/janna/VS/w3school/SISCOG Web App c2 en reservert en ledig.html');
-    await page.goto('file:///C:/Users/janna/VS/w3school/TestPage.html');
+   // await page.goto('file:///C:/Users/janna/VS/w3school/TestPage.html');
     
     if ('https://tpowebservice.nsb.no:8501/app/login' == page.url().toString()) 
     {
