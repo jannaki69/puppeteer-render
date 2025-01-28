@@ -484,7 +484,7 @@ try{
 
   await page.type('#username', 'ikoutsileos');
   //await page.type("input[type=text]", "username");
-  await page.type('#password', '13Panathinaikos');
+  await page.type('#password', 'Landslagetihopp1');
   //await page.type("input[type=password]", "password");
 
   await page.click("button[type=submit]");
